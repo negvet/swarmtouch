@@ -3,17 +3,19 @@ from __future__ import division
 import csv
 from mpl_toolkits.mplot3d import Axes3D
 import matplotlib.pyplot as plt
+import matplotlib.patches as patches
 import numpy as np
 import os
 from sklearn import datasets, linear_model
 from sklearn.metrics import mean_squared_error, r2_score
 import math
+from math import *
 from tf.transformations import *
 from scipy.spatial.distance import cdist
 import xlwt
 import curvature
 
-plt.rcParams.update({'font.size': 18})
+plt.rcParams.update({'font.size': 22})
 
 PATH = os.getcwd()+'/'
 visualize = 1
@@ -120,27 +122,43 @@ def plot(data, style='-'):
 
 
 def trajplot(centroid_array, drone1, drone2, drone3, title, obstacles=None, simulation=False, patterns=None):
-	fig = plt.figure()
+	fig = plt.figure(figsize=(10,10))
 	ax = fig.gca()
 	centroid_path = centroid_array[:,1:3]
-	plot(centroid_path)
-	plot(drone1.pose, '--')
-	plot(drone2.pose, '--')
-	plot(drone3.pose, '--')
+	t_index = -1
+	# paths
+	plot(centroid_path[:t_index,:])
+	plot(drone1.pose[:t_index,:], '--')
+	plot(drone2.pose[:t_index,:], '--')
+	plot(drone3.pose[:t_index,:], '--')
 	legend_list = ['centroid','drone1', 'drone2', 'drone3']
-	
+	# robots poses
+	plt.plot(centroid_path[t_index,1], -centroid_path[t_index,0], '*', color='blue')
+	plt.plot(drone1.pose[t_index,1], -drone1.pose[t_index,0], '^', color='blue', markersize=10)
+	plt.plot(drone2.pose[t_index,1], -drone2.pose[t_index,0], '^', color='blue', markersize=10)
+	plt.plot(drone3.pose[t_index,1], -drone3.pose[t_index,0], '^', color='blue', markersize=10)
+	# obstacles poses
 	if obstacles is not None:
 		for obstacle in obstacles:
-			circle = plt.Circle((obstacle.pose[1], -obstacle.pose[0]),0.27, color='yellow')
+			circle = plt.Circle((obstacle.pose[1], -obstacle.pose[0]),0.27, color='yellow', fill=True, zorder=0)
 			ax.add_artist(circle)
-			plt.plot(obstacle.pose[1], -obstacle.pose[0],'ro')
+			plt.plot(obstacle.pose[1], -obstacle.pose[0],'s', markersize=15, color='red')
 			legend_list.append(obstacle.name)
+	# current formation shape
+	pp = [ [drone1.pose[t_index,1], -drone1.pose[t_index,0]], [drone2.pose[t_index,1], -drone2.pose[t_index,0]], [drone3.pose[t_index,1], -drone3.pose[t_index,0]] ]
+	formation = patches.Polygon(pp, '--', color='blue', fill=False, linewidth=1);
+	plt.gca().add_patch(formation)
+	# # initial formation shape
+	# pp = [ [drone1.pose[0,1], -drone1.pose[0,0]], [drone2.pose[0,1], -drone2.pose[0,0]], [drone3.pose[0,1], -drone3.pose[0,0]] ]
+	# formation = patches.Polygon(pp, '--', color='blue', fill=False, linewidth=1);
+	# plt.gca().add_patch(formation)
+
 	#plt.legend(legend_list)
 	plt.xlabel('Y, meters')
 	plt.ylabel('X, meters')
 	ax.set_aspect('equal')
 	plt.grid()
-	plt.title(title)
+	plt.title('Experiment time moment: '+str(round(drone1.time[t_index][0],1))+' sec') # plt.title(title)
 
 
 def dist2wall(path, obstacles):
@@ -340,8 +358,8 @@ for name in subject_name_list:
 				palm_orient_without_glove_for_all.append(glove.orient)
 
 				data_without_glove.glove_status = 'Visual'
-				data_without_glove.S_min_er = round( np.mean(area_array_without_glove_error),4 )
-				data_without_glove.S_std_er = round( np.std(area_array_without_glove_error),4 )
+				data_without_glove.S_min_er = round( np.mean(area_array_without_glove_error),4)
+				data_without_glove.S_std_er = round( np.std(area_array_without_glove_error), 4)
 				data_without_glove.S_max_er = round( np.amax(area_array_without_glove_error), 4)
 
 				#velocity
@@ -446,4 +464,7 @@ for name in subject_name_list:
 # ax2.axhline(y=default_area, color='k')
 
 if visualize:
-	plt.show()
+	plt.draw()
+	plt.pause(0.1)
+	raw_input('Hit Enter to close')
+	plt.close('all')

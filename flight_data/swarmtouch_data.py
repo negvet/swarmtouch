@@ -55,11 +55,13 @@ default_area = 0.0693
 area_array_with_glove_for_all = []
 area_array_without_glove_for_all = []
 
+path = os.getcwd() + '/'
+
 for name in subject_name_list:
 
 	print "\n\nName:", name ,'______________________________________________________'
-	directory_without_glove = "/home/drone/SwarmTouchData/"+name+"/without_glove/"
-	directory_with_glove = "/home/drone/SwarmTouchData/"+name+"/with_glove/"
+	directory_without_glove = path+name+"/without_glove/"
+	directory_with_glove = path+name+"/with_glove/"
 
 	list_of_directories_with_experiments = [directory_without_glove, directory_with_glove]
 	# print 'list_of_directories_with_experiments', list_of_directories_with_experiments

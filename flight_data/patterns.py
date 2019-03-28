@@ -155,12 +155,17 @@ def trajeval(centroid_array, drone1, drone2, drone3, title, obstacles=None, patt
 	fig = plt.figure()
 	ax = fig.gca()
 	centroid_path = centroid_array[:,1:3]
-	plot(centroid_path)
-	plot(drone1.pose, '--')
-	plot(drone2.pose, '--')
-	plot(drone3.pose, '--')
+	t_index = -1
+	plot(centroid_path[:t_index,:])
+	plot(drone1.pose[:t_index,:], '--')
+	plot(drone2.pose[:t_index,:], '--')
+	plot(drone3.pose[:t_index,:], '--')
 	legend_list = ['centroid','drone1', 'drone2', 'drone3']
-	
+	plt.plot(drone1.pose[-1,1], -drone1.pose[-1,0], 'ro', color='blue')
+	plt.plot(drone2.pose[-1,1], -drone2.pose[-1,0], 'ro', color='blue')
+	plt.plot(drone3.pose[-1,1], -drone3.pose[-1,0], 'ro', color='blue')
+
+
 	if obstacles is not None:
 		for obstacle in obstacles:
 			circle = plt.Circle((obstacle.pose[1], -obstacle.pose[0]),0.27, color='yellow')
@@ -242,12 +247,12 @@ def savedata(data):
 
 subject_name_list = [
 					 'Grisha',
-					 'Evgeny',
-					 'Ruslan',
-					 'Tamash',
-					 'Vladimir'
+					 # 'Evgeny',
+					 # 'Ruslan',
+					 # 'Tamash',
+					 # 'Vladimir'
 					]
-visualize = 0
+visualize = 1
 
 default_area = 0.0693
 area_array_with_glove_for_all = []
@@ -292,6 +297,7 @@ for name in subject_name_list:
 							drone.pose = np.vstack((drone.pose, np.array([float(row[10]), float(row[11]), float(row[12])])))
 							drone.time = np.vstack((drone.time,   (float(row[0]) / 1000000000) - init_time  ))
 						drone.rostime = np.append(drone.rostime, int(row[0]))
+		print drone.pose.shape, drone.time.shape
 		# OBSTACLES
 		obstacle_names   = np.array([
 						 'obstacle0', 'obstacle1',
@@ -357,4 +363,7 @@ for name in subject_name_list:
 		savedata(data_with_glove)
 
 if visualize:
-	plt.show()
+	plt.draw()
+	plt.pause(0.1)
+	raw_input('Hit Enter to close')
+	plt.close('all')
