@@ -122,7 +122,7 @@ def plot(data, style='-'):
 
 
 def trajplot(centroid_array, drone1, drone2, drone3, title, obstacles=None, simulation=False, patterns=None):
-	fig = plt.figure(figsize=(10,10))
+	fig = plt.figure(figsize=(8,10))
 	ax = fig.gca()
 	centroid_path = centroid_array[:,1:3]
 	t_index = -1
@@ -158,7 +158,7 @@ def trajplot(centroid_array, drone1, drone2, drone3, title, obstacles=None, simu
 	plt.ylabel('X, meters')
 	ax.set_aspect('equal')
 	plt.grid()
-	plt.title('Experiment time moment: '+str(round(drone1.time[t_index][0],1))+' sec') # plt.title(title)
+	plt.title('Time from the start: '+str(round(drone1.time[t_index][0],1))+' sec') # plt.title(title)
 
 
 def dist2wall(path, obstacles):
@@ -238,13 +238,27 @@ def savedata(data):
 
 	wb.save(data.folder_to_save+'output.xls')
 
+def init_fonts():
+    SMALL_SIZE = 12
+    MEDIUM_SIZE = 18
+    BIGGER_SIZE = 34
+
+    plt.rc('font', size=SMALL_SIZE)          # controls default text sizes
+    plt.rc('axes', titlesize=BIGGER_SIZE)    # fontsize of the axes title
+    plt.rc('axes', labelsize=BIGGER_SIZE)    # fontsize of the x and y labels
+    plt.rc('xtick', labelsize=MEDIUM_SIZE)    # fontsize of the tick labels
+    plt.rc('ytick', labelsize=MEDIUM_SIZE)    # fontsize of the tick labels
+    plt.rc('legend', fontsize=MEDIUM_SIZE)   # legend fontsize
+    plt.rc('figure', titlesize=BIGGER_SIZE)  # fontsize of the figure title
+
+init_fonts()
 
 subject_name_list = [
-					 # 'Evgeny',
-					 # 'Ruslan',
-					 # 'Tamash',
+					 'Evgeny',
+					 'Ruslan',
+					 'Tamash',
 					 'Grisha',
-					 # 'Vladimir'
+					 'Vladimir'
 					]
 
 default_area = 0.0693
@@ -268,6 +282,7 @@ for name in subject_name_list:
 	directory_without_glove = PATH+name+"/without_glove/"
 	directory_with_glove = PATH+name+"/with_glove/"
 
+	# list_of_directories_with_experiments = [directory_without_glove]
 	list_of_directories_with_experiments = [directory_without_glove, directory_with_glove]
 	# print 'list_of_directories_with_experiments', list_of_directories_with_experiments
 

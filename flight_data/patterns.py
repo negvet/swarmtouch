@@ -128,7 +128,7 @@ def deviation_evaluator(centr_action, pattern_name):
 	elif pattern_name=='contracted_left':
 		gain = (centr_action[:,1][-1] - centr_action[:,1][0] < 0)
 	elif 'extended' in pattern_name:
-		gain = (centr_action[:,0][-1] - centr_action[:,0][0] < 0)
+		gain = (centr_action[:,0][-1] - centr_action[:,0][0] > 0)
 	else:
 		gain = -1
 	return gain
@@ -175,28 +175,41 @@ def trajeval(centroid_array, drone1, drone2, drone3, title, obstacles=None, patt
 	#plt.legend(legend_list)
 	gain_dev = 0
 	gain_area = 0
+	cr = 0; cl = 0; er = 0; el = 0
 	for  i in range(len(patterns.names)):
-		reaction_time = 1500 # [ms]
-		pattern_start = (np.abs(drone1.rostime - patterns.patterns_times[i]).argmin())
-		pattern_end = pattern_start+nsamples_from_pattern_duration(patterns.names[i])
-		pattern_and_react_time = pattern_start+nsamples_from_pattern_duration(patterns.names[i], reaction_time)
-		centr_deviation = centroid_path[pattern_start : pattern_and_react_time]
-		gain_dev += deviation_evaluator(centr_deviation, patterns.names[i])
-		# print 'dx=',centr_action[:,0][-1] - centr_action[:,0][0]
-		# print 'dy=',centr_action[:,1][-1] - centr_action[:,1][0]
-		# print patterns.names[i]
-		# print '\n'
-		area_change = polyarea(drone1, drone2, drone3, pattern_and_react_time) -\
-					  polyarea(drone1, drone2, drone3, pattern_start) 
-		gain_area += areachange_evaluator(area_change, patterns.names[i])
-		# print areachange_evaluator(area_change, patterns.names[i])
-		# print 'area change=', area_change
-		# print patterns.names[i]
-		# print '\n'
-		plot(centr_deviation, 'x')
-		plt.plot( centroid_path[pattern_start,1], -centroid_path[pattern_start,0], 'd', markersize=10 )
-	#print 'centroid dev gain[%]', round( gain_dev / len(patterns.patterns_times), 3 ) * 100
-	print 'area change gain[%]', round( gain_area / len(patterns.patterns_times), 3 ) * 100
+		if patterns.names[i] == 'contracted_right': cr += 1
+		if patterns.names[i] == 'contracted_left': cl += 1
+		if patterns.names[i] == 'extended_right': er += 1
+		if patterns.names[i] == 'extended_left': el += 1
+		reaction_time = 3300 # [ms]
+		if patterns.names[i] == 'extended_left':
+			pattern_start = (np.abs(drone1.rostime - patterns.patterns_times[i]).argmin())
+			pattern_end = pattern_start+nsamples_from_pattern_duration(patterns.names[i])
+			pattern_and_react_time = pattern_start+nsamples_from_pattern_duration(patterns.names[i], reaction_time)
+			centr_deviation = centroid_path[pattern_start : pattern_and_react_time]
+			gain_dev += deviation_evaluator(centr_deviation, patterns.names[i])
+			# print 'dx=',centr_action[:,0][-1] - centr_action[:,0][0]
+			# print 'dy=',centr_action[:,1][-1] - centr_action[:,1][0]
+			# print patterns.names[i]
+			# print '\n'
+			area_change = polyarea(drone1, drone2, drone3, pattern_and_react_time) -\
+						  polyarea(drone1, drone2, drone3, pattern_start) 
+			gain_area += areachange_evaluator(area_change, patterns.names[i])
+			# print areachange_evaluator(area_change, patterns.names[i])
+			# print 'area change=', area_change
+			# print patterns.names[i]
+			# print '\n'
+			plot(centr_deviation, 'x')
+			plt.plot( centroid_path[pattern_start,1], -centroid_path[pattern_start,0], 'd', markersize=10 )
+	if el != 0:
+		print 'centroid dev gain[%]', round( gain_dev / el, 3 ) * 100
+		print 'area change gain[%]', round( gain_area / el, 3 ) * 100
+	else:
+		print 'no such pattern'
+	
+	# print cr, cl, el, er, len(patterns.names)
+	# print 'centroid dev gain[%]', round( gain_dev / len(patterns.patterns_times), 3 ) * 100
+	# print 'area change gain[%]', round( gain_area / len(patterns.patterns_times), 3 ) * 100
 	plt.xlabel('Y, meters')
 	plt.ylabel('X, meters')
 	plt.grid()
@@ -247,12 +260,12 @@ def savedata(data):
 
 subject_name_list = [
 					 'Grisha',
-					 # 'Evgeny',
-					 # 'Ruslan',
-					 # 'Tamash',
-					 # 'Vladimir'
+					 'Evgeny',
+					 'Ruslan',
+					 'Tamash',
+					 'Vladimir'
 					]
-visualize = 1
+visualize = 0
 
 default_area = 0.0693
 area_array_with_glove_for_all = []
@@ -297,7 +310,7 @@ for name in subject_name_list:
 							drone.pose = np.vstack((drone.pose, np.array([float(row[10]), float(row[11]), float(row[12])])))
 							drone.time = np.vstack((drone.time,   (float(row[0]) / 1000000000) - init_time  ))
 						drone.rostime = np.append(drone.rostime, int(row[0]))
-		print drone.pose.shape, drone.time.shape
+		# print drone.pose.shape, drone.time.shape
 		# OBSTACLES
 		obstacle_names   = np.array([
 						 'obstacle0', 'obstacle1',
