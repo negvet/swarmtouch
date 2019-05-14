@@ -152,7 +152,7 @@ def nsamples_from_pattern_duration(pattern_name, reaction_time=0):
 	return int(n)
 
 def trajeval(centroid_array, drone1, drone2, drone3, title, obstacles=None, patterns=None):
-	fig = plt.figure()
+	fig = plt.figure(figsize=(8,10))
 	ax = fig.gca()
 	centroid_path = centroid_array[:,1:3]
 	plot(centroid_path)
@@ -165,7 +165,7 @@ def trajeval(centroid_array, drone1, drone2, drone3, title, obstacles=None, patt
 		for obstacle in obstacles:
 			circle = plt.Circle((obstacle.pose[1], -obstacle.pose[0]),0.27, color='yellow')
 			ax.add_artist(circle)
-			plt.plot(obstacle.pose[1], -obstacle.pose[0],'ro')
+			plt.plot(obstacle.pose[1], -obstacle.pose[0],'s', color='red', markersize=10)
 			legend_list.append(obstacle.name)
 	#plt.legend(legend_list)
 	gain_dev = 0
@@ -189,14 +189,14 @@ def trajeval(centroid_array, drone1, drone2, drone3, title, obstacles=None, patt
 		# print patterns.names[i]
 		# print '\n'
 		plot(centr_deviation, 'x')
-		plt.plot( centroid_path[pattern_start,1], -centroid_path[pattern_start,0], 'o', markersize=6 )
+		plt.plot( centroid_path[pattern_start,1], -centroid_path[pattern_start,0], 'd', markersize=10 )
 	#print 'centroid dev gain[%]', round( gain_dev / len(patterns.patterns_times), 3 ) * 100
 	print 'area change gain[%]', round( gain_area / len(patterns.patterns_times), 3 ) * 100
 	plt.xlabel('Y, meters')
 	plt.ylabel('X, meters')
 	plt.grid()
 	ax.set_aspect('equal')
-	plt.title(title)
+	# plt.title(title)
 
 
 def savedata(data):
@@ -247,7 +247,7 @@ subject_name_list = [
 					 'Tamash',
 					 'Vladimir'
 					]
-visualize = 0
+visualize = 1
 
 default_area = 0.0693
 area_array_with_glove_for_all = []
@@ -357,4 +357,7 @@ for name in subject_name_list:
 		savedata(data_with_glove)
 
 if visualize:
-	plt.show()
+	plt.draw()
+	plt.pause(0.1)
+	raw_input('Hit Enter to continue')
+	plt.close('all')
