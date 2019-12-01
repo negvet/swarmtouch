@@ -125,8 +125,6 @@ if __name__ == '__main__':
 
 		# str_msg.header.stamp = rospy.Time.now()
 
-
-
 		# TODO: update current position of all objects every loop once in the beginning
 		drone1.position()
 		drone2.position()
@@ -212,15 +210,6 @@ if __name__ == '__main__':
 			drone3, delta3 = swarmlib.pose_update_obstacle(drone3, obstacle_objects_list[q], R_obstacles)
 		
 
-
-
-
-
-
-
-
-
-
 		centroid_after_obstacles = swarmlib.centroid_calc(drone1, drone2, drone3)
 		move_right = False
 		move_left = False
@@ -238,16 +227,6 @@ if __name__ == '__main__':
 
 		swarmlib.publish_pose(centroid_after_obstacles, np.array([0,0,0]), "centroid_after_obstacles")
 		swarmlib.publish_pose(centroid_before_obstacles, np.array([0,0,0]), "centroid_before_obstacles")
-
-
-
-
-
-
-
-
-
-
 
 
 		# # TO FLY
@@ -278,8 +257,6 @@ if __name__ == '__main__':
 			if not killed_recorder and data_recording:
 				swarmlib.killer_of_recorder()
 				killed_recorder = True
-
-
 
 		# Landing
 		if toFly and human.pose[2]<0.3:
@@ -314,57 +291,6 @@ if __name__ == '__main__':
 		rate.sleep()
 
 		# END #######################################################################3
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 		# drone1.sp = drone1.sp + imp_pose
