@@ -114,3 +114,37 @@ For more inforamtion, please, take a look at the [source code](https://github.co
 * [SwarmTouch: Guiding a Swarm of Micro-Quadrotors With Impedance Control Using a Wearable Tactile Interface](https://ieeexplore.ieee.org/document/8758191), ([arxiv](https://arxiv.org/abs/1909.02298))
 * [SwarmTouch: Tactile Interaction of Human with Impedance Controlled Swarm of Nano-Quadrotors](https://ieeexplore.ieee.org/document/8594424/), ([arxiv](https://arxiv.org/abs/1909.03491))
 * [Tactile Interaction of Human with Swarm of Nano-Quadrotors augmented with Adaptive Obstacle Avoidance](https://hal.archives-ouvertes.fr/hal-02128383/)
+
+## Citation
+Feel free to cite the articles, if you use the repository.
+```
+@article{tsykunov2019swarmtouch,
+  title={SwarmTouch: Guiding a Swarm of Micro-Quadrotors With Impedance Control Using a Wearable Tactile Interface},
+  author={Tsykunov, Evgeny and Agishev, Ruslan and Ibrahimov, Roman and Labazanova, Luiza and Tleugazy, Akerke and Tsetserukou, Dzmitry},
+  journal={IEEE transactions on haptics},
+  volume={12},
+  number={3},
+  pages={363--374},
+  year={2019},
+  publisher={IEEE}
+}
+```
+
+```
+@inproceedings{tsykunov2018swarmtouch,
+  title={SwarmTouch: tactile interaction of human with impedance controlled swarm of nano-quadrotors},
+  author={Tsykunov, Evgeny and Labazanova, Luiza and Tleugazy, Akerke and Tsetserukou, Dzmitry},
+  booktitle={2018 IEEE/RSJ International Conference on Intelligent Robots and Systems (IROS)},
+  pages={4204--4209},
+  year={2018},
+  organization={IEEE}
+}
+```
+
+```
+@inproceedings{agishev2019tactile,
+  title={Tactile Interaction of Human with Swarm of Nano-Quadrotors augmented with Adaptive Obstacle Avoidance},
+  author={Agishev, Ruslan and Tsykunov, Evgeny and Labazanova, Luiza and Tleugazy, Akerke and Tsetserukou, Dzmitry},
+  year={2019}
+}
+```
