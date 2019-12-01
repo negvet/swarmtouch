@@ -1,0 +1,9 @@
+# cache files
+.ipynb_checkpoints
+*.pyc
+
+# documents
+*.pdf
+
+# large files
+*.zip

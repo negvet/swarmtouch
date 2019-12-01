@@ -109,8 +109,7 @@ def plot_vel_acc_jerk(vel_x, vel_y, vel_z, acc_x, acc_y, acc_z, jerk_x, jerk_y, 
 # area_all_users
 
 
-visualize = 0
-PATH = os.getcwd()+"/"
+visualize = 1
 subject_name_list = [
 					 'Grisha',
 					 'Evgeny',
@@ -122,11 +121,13 @@ default_area = 0.0693
 area_array_with_glove_for_all = []
 area_array_without_glove_for_all = []
 
+path = os.getcwd() + '/'
+
 for name in subject_name_list:
 
 	print "\n\nName:", name ,'______________________________________________________'
-	directory_without_glove = PATH+name+"/without_glove/"
-	directory_with_glove = PATH+name+"/with_glove/"
+	directory_without_glove = path+name+"/without_glove/"
+	directory_with_glove = path+name+"/with_glove/"
 
 	list_of_directories_with_experiments = [directory_without_glove, directory_with_glove]
 	# print 'list_of_directories_with_experiments', list_of_directories_with_experiments
@@ -217,5 +218,5 @@ for name in subject_name_list:
 if visualize:
 	plt.draw()
 	plt.pause(0.1)
-	raw_input('Hit Enter to continue')
+	raw_input('Hit Enter to close')
 	plt.close('all')
