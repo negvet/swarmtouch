@@ -222,11 +222,11 @@ def savedata(data):
 
 
 subject_name_list = [
-					 # 'Evgeny',
-					 # 'Ruslan',
-					 # 'Tamash',
+					 'Evgeny',
+					 'Ruslan',
+					 'Tamash',
 					 'Grisha',
-					 # 'Vladimir'
+					 'Vladimir'
 					]
 
 default_area = 0.0693
@@ -446,4 +446,7 @@ for name in subject_name_list:
 # ax2.axhline(y=default_area, color='k')
 
 if visualize:
-	plt.show()
+	plt.draw()
+	plt.pause(0.1)
+	raw_input('Hit Enter to continue')
+	plt.close('all')
