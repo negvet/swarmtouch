@@ -8,6 +8,7 @@ import os
 from sklearn import datasets, linear_model
 from sklearn.metrics import mean_squared_error, r2_score
 import math
+import itertools
 from low_pass_filter import butter_lowpass_filter
 
 
@@ -31,6 +32,28 @@ def area(drone1,drone2,drone3):
 		else:
 			area_array = np.vstack((area_array, np.array([drone1.time[i][0], area]) ))
 	return area_array
+
+
+
+def distances_func(drone1,drone2,drone3):
+	drones = [drone1,drone2,drone3]
+	for drone in drones:
+		drone.pose = drone.pose[:-100][:,:2] # took only x-y
+		# drone.pose = drone.pose[:10][:,:2] # took only x-y
+		# print('drone.pose',drone.tf,drone.pose)
+
+	distances = np.empty((len(drone.pose),3)); d=0
+	for a, b in itertools.combinations(drones, 2):
+		dist_a_b = np.empty(len(drone.pose))
+		for i in range(len(drone.pose)):
+			dist_a_b[i] = np.linalg.norm(a.pose[i]-b.pose[i])
+		# print(dist_a_b.shape)
+		# print(dist_a_b)
+		distances[:,d]=dist_a_b # first column distance between drones 1-2, second 1-3, third 2-3
+		d+=1
+	# print(distances.shape)
+	# print(distances)
+	return distances
 
 def centroid(drone1,drone2,drone3):
 	centroid_array = np.array([])
@@ -118,6 +141,7 @@ subject_name_list = [
 					 'Vladimir'
 					]
 default_area = 0.0693
+default_distance = 0.4
 area_array_with_glove_for_all = []
 area_array_without_glove_for_all = []
 
@@ -163,57 +187,76 @@ for name in subject_name_list:
 								drone.pose = np.vstack((drone.pose, np.array([float(row[10]), float(row[11]), float(row[12])])))
 								drone.time = np.vstack((drone.time,   (float(row[0]) / 1000000000) - init_time  ))
 
+
 			if 'without_glove' in exper_type:
 				area_array_without_glove = area(drone1,drone2,drone3)
 				area_array_without_glove_for_all.append(area_array_without_glove)
-				area_array_without_glove_error = abs(area_array_without_glove[:,1] - default_area)
-				print 'without_glove AREA error:'
-				print 'np.mean  ', np.mean(area_array_without_glove_error)
+				area_array_without_glove_error = (area_array_without_glove[:,1] - default_area)
+				print 'Visual AREA error:'
+				print 'np.mean  ', np.mean(abs(area_array_without_glove_error))
 				print 'np.std   ', np.std(area_array_without_glove_error)
-				print 'np.amax  ', np.amax(area_array_without_glove_error)
+				print 'np.amax  ', np.amax(abs(area_array_without_glove_error))
 
 				#velocity
-				print 'without_glove VELOCITY'
+				print 'Visual VELOCITY'
 				vel, acc, jerk = derivatives(title=name+' without glove')
 				print 'vel mean', np.mean(vel)
 				print 'acc mean', np.mean(acc)
 				print 'jerk mean', np.mean(jerk)
 
+				# distance
+				distances = distances_func(drone1,drone2,drone3)
+				distance_error = distances - default_distance
+				# print(distance_error)
+				print 'Visual DISTANCE error:'
+				print 'np.mean  ', np.mean(abs(distance_error))
+				print 'np.std   ', np.std(distance_error)
+				print 'np.amax  ', np.amax(abs(distance_error))
+
 
 			if 'with_glove' in exper_type:
 				area_array_with_glove = area(drone1,drone2,drone3)
 				area_array_with_glove_for_all.append(area_array_with_glove)
-
-				area_array_with_glove_error = abs(area_array_with_glove[:,1] - default_area)
-				print 'with_glove AREA error:'
-				print 'np.mean  ', np.mean(area_array_with_glove_error)
+				area_array_with_glove_error = (area_array_with_glove[:,1] - default_area)
+				print 'Tactile AREA error:'
+				print 'np.mean  ', np.mean(abs(area_array_with_glove_error))
 				print 'np.std   ', np.std(area_array_with_glove_error)
-				print 'np.amax  ', np.amax(area_array_with_glove_error)
+				print 'np.amax  ', np.amax(abs(area_array_with_glove_error))
 
 				#velocity
-				print 'with_glove VELOCITY'
+				print 'Tactile VELOCITY'
 				vel, acc, jerk = derivatives(title=name+' with glove')
 				print 'vel mean', np.mean(vel)
 				print 'acc mean', np.mean(acc)
 				print 'jerk mean', np.mean(jerk)
 
+				# distance
+				distances = distances_func(drone1,drone2,drone3)
+				distance_error = distances - default_distance
+				# print(distance_error)
+				print 'Tactile DISTANCE error:'
+				print 'np.mean  ', np.mean(abs(distance_error))
+				print 'np.std   ', np.std(distance_error)
+				print 'np.amax  ', np.amax(abs(distance_error))
 
 
-# f, ((ax1, ax2), (ax3, ax4)) = plt.subplots(2, 2)
+f, ((ax1, ax2), (ax3, ax4)) = plt.subplots(2, 2)
 
-#AREA
-# for i in range(len(area_array_without_glove_for_all)):
-# 	ax1.plot(area_array_without_glove_for_all[i][:,0], area_array_without_glove_for_all[i][:,1])
-# for i in range(len(area_array_with_glove_for_all)):
-# 	ax2.plot(area_array_with_glove_for_all[i][:,0], area_array_with_glove_for_all[i][:,1])
+# AREA
+for i in range(len(area_array_without_glove_for_all)):
+	ax1.plot(area_array_without_glove_for_all[i][:,0], area_array_without_glove_for_all[i][:,1])
+for i in range(len(area_array_with_glove_for_all)):
+	ax2.plot(area_array_with_glove_for_all[i][:,0], area_array_with_glove_for_all[i][:,1])
 
-# ax1.set_title('Area Without glove')
-# ax2.set_title('Area With glove')
-# ax1.axis([0, 60, 0.00, 0.1])
-# ax2.axis([0, 60, 0.00, 0.1])
+ax1.set_title('Area Without glove')
+ax2.set_title('Area With glove')
+ax1.axis([0, 60, 0.00, 0.1])
+ax2.axis([0, 60, 0.00, 0.1])
 
-# ax1.axhline(y=default_area, color='k')
-# ax2.axhline(y=default_area, color='k')
+ax1.axhline(y=default_area, color='k')
+ax2.axhline(y=default_area, color='k')
+
+# plt.show()
 
 if visualize:
 	plt.draw()
